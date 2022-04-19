@@ -1,18 +1,5 @@
-/* Задания на урок:
-
-1) Удалить все рекламные блоки со страницы (правая часть сайта)
-
-2) Изменить жанр фильма, поменять "комедия" на "драма"
-
-3) Изменить задний фон постера с фильмом на изображение "bg.jpg". Оно лежит в папке img.
-Реализовать только при помощи JS
-
-4) Список фильмов на странице сформировать на основании данных из этого JS файла.
-Отсортировать их по алфавиту 
-
-5) Добавить нумерацию выведенных фильмов */
-
 "use strict";
+console.log("done");
 
 const movieDB = {
   movies: [
@@ -27,47 +14,86 @@ const movieDB = {
 const adv = document.querySelectorAll(".promo__adv img"),
   promoBG = document.querySelector(".promo__bg"),
   promoGenre = promoBG.querySelector(".promo__genre"),
-  promoList = document.querySelector(".promo__interactive-list");
+  promoList = document.querySelector(".promo__interactive-list"),
+  addForm = document.querySelector(".add"),
+  inputValue = addForm.querySelector(".adding__input");
 
-adv.forEach((element) => {
-  element.remove();
+const removeADV = (item) => {
+  item.forEach((element) => {
+    element.remove();
+  });
+};
+
+const changeBG = () => {
+  promoGenre.textContent = "драма";
+
+  promoBG.style.backgroundImage = 'url("img/bg.jpg")';
+};
+
+const sortMovieList = () => {
+  movieDB.movies.sort();
+};
+
+const changeMovieList = () => {
+  sortMovieList();
+
+  promoList.innerHTML = "";
+
+  movieDB.movies.forEach((item, index) => {
+    promoList.innerHTML += `<li class="promo__interactive-item">${
+      index + 1
+    }: ${item}
+                            <div class="delete"></div>
+                        </li>`;
+  });
+
+  document.querySelectorAll(".delete").forEach((btn, index) => {
+    btn.addEventListener("click", () => {
+      btn.parentElement.remove();
+
+      movieDB.movies.splice(index, 1);
+
+      changeMovieList();
+    });
+  });
+};
+
+addForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  const inputForm = inputValue.value;
+  const checkbox = addForm.querySelector("[type=checkbox]");
+
+  if (inputForm && inputForm != " ") {
+    if (inputForm.length >= 13) {
+      movieDB.movies.push(`${inputForm.substring(0, 13)}...`);
+    } else {
+      movieDB.movies.push(inputForm);
+    }
+  }
+  if (checkbox.checked) {
+    console.log(inputForm);
+  }
+  addForm.reset();
+  changeMovieList();
 });
 
-promoGenre.textContent = "драма";
+changeMovieList();
 
-promoBG.style.backgroundImage = 'url("img/bg.jpg")';
+// document.addEventListener("DOMContentLoaded", function () {
+// 1) Реализовать функционал, что после заполнения формы и нажатия кнопки "Подтвердить" -
+// новый фильм добавляется в список. Страница не должна перезагружаться.
+// Новый фильм должен добавляться в movieDB.movies.
+// Для получения доступа к значению input - обращаемся к нему как input.value;
+// P.S. Здесь есть несколько вариантов решения задачи, принимается любой, но рабочий.
 
-promoList.innerHTML = "";
+// 2) Если название фильма больше, чем 21 символ - обрезать его и добавить три точки
 
-movieDB.movies.forEach((item, index) => {
-  promoList.innerHTML += `
-    <li class="promo__interactive-item"> ${index + 1}: ${item}
-        <div class="delete"></div>
-    </li>
-    `;
-});
+// 3) При клике на мусорную корзину - элемент будет удаляться из списка (сложно)
 
-// adv.querySelectorAll("img").forEach((item) => item.remove());
-// adv.querySelector("div").remove();
-// promoGenre.textContent = "драма";
+// 4) Если в форме стоит галочка "Сделать любимым" - в консоль вывести сообщение:
+// "Добавляем любимый фильм"
 
-// promoBG.style =
-//   'background: url("../img/bg.jpg") center center/cover no-repeat;';
-
-// const movieDB = {
-//   movies: [],
-// };
-
-// function sortMovies() {
-//   promoItems.forEach((item) => {
-//     movieDB.movies.push(item.textContent);
-//   });
-
-//   movieDB.movies.sort();
-
-//   promoItems.forEach((item, index) => {
-//     promoItems[index].textContent = `${index + 1}: ${movieDB.movies[index]}`;
-//   });
-// }
-
-// console.log(movieDB);
+// 5) Фильмы должны быть отсортированы по алфавиту */
+removeADV(adv);
+changeBG();
